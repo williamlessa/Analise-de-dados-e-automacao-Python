@@ -10,23 +10,27 @@ tabela_vendas = pd.read_excel('vendas.xlsx')
 pd.set_option('display.max_columns', None)
 print(tabela_vendas)
 
-# passo 3 - faturamento por loja
+''' passo 3 - faturamento total
+faturamento_total = tabela_vendas['Valor Final'].sum()
+print(faturamento_total) '''
+
+# passo 4 - faturamento por loja
 faturamento = tabela_vendas[['ID Loja', 'Valor Final']].groupby('ID Loja').sum()
 print(faturamento)
 
-# passo 4 - quantidade de produtos vendidos por loja
+# passo 5 - quantidade de produtos vendidos por loja
 quantidade = tabela_vendas[['ID Loja', 'Quantidade']].groupby('ID Loja').sum()
 print(quantidade)
 
 # print para separar um passo do outro com traços
 print('-' * 50)
 
-# passo 5 - ticket médio por produto em cada loja
+# passo 6 - ticket médio por produto em cada loja
 ticket_medio = (faturamento['Valor Final'] / quantidade['Quantidade']).to_frame()
 ticket_medio = ticket_medio.rename(columns={0: 'Ticket Médio'})
 print(ticket_medio)
 
-# passo 6 - enviar um email com o relatório
+# passo 7 - enviar um email com o relatório
 # código de outlook para enviar email (padrão)
 outlook = win32.Dispatch('outlook.application')
 mail = outlook.CreateItem(0)
@@ -37,10 +41,10 @@ mail.HTMLBody = f'''
 
 <p>Segue o relatório de vendas por cada loja.</p>
 
-<p>Faturamento:</p>
+<p>Faturamento por Loja:</p>
 {faturamento.to_html(formatters={'Valor Final': 'R${:,.2f}'.format})}
 
-<p>Quantidade Vendida:</p>
+<p>Quantidade Vendida por Loja:</p>
 {quantidade.to_html()}
 
 <p>Ticket Médio dos Produtos em cada Loja:</p>
